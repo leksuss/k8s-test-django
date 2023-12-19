@@ -63,7 +63,6 @@ $ docker compose build web
 
 Аналогичным образом можно удалять библиотеки из зависимостей.
 
-<a name="env-variables"></a>
 ## Переменные окружения
 
 Образ с Django считывает настройки из переменных окружения:
@@ -75,3 +74,33 @@ $ docker compose build web
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+
+## Как запустить dev-версию используя Kubernetes
+
+[Установите](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/) `minikube`, запустите его командой:
+```shell
+$ minikube start
+```
+
+Перед запуском сайта необходимо задать переменные окружения и чувствительные данные (секреты) 
+В репозитории есть пример файла `env_vars_example.yaml`, в котором нужно заполнить значение переменной `DEBUG`. Этот файл описывает объект `ConfigMap`.
+А в примере файла с секретами `env_secrets_example.yaml` нужно прописать `SECRET_KEY` и `DATABASE_URL`. Этот файл описывает объект `Secret`.
+
+Затем необходимо создать объекты `ConfigMap` и `Secret`, указав путь к файлам, которые были созданы на основе примеров данных выше:
+```shell
+$ kubectl apply -f kubernetes/env_vars.yaml
+$ kubectl apply -f kubernetes/env_secrets.yaml
+```
+
+После чего запускаем наше приложение через создание объекта `Deployment`:
+```shell
+$ kubectl apply -f kubernetes/project.yaml
+```
+
+Если вы используете драйвер Docker, для проброса портов вам нужно также запустить следующую команду:
+```shell
+$ minikube service myapp-service
+```
+
+`minikube` автоматически пробросит порты и откроет страницу с приложением.
