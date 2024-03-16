@@ -2,4 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-configmap.yaml
+env_vars.yaml
+env_secrets.yaml
+.env
