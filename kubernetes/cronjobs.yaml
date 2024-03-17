@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: django-clearsessions-once
+spec:
+  schedule: '@monthly'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: django-clearsessions-once
+            image: myapp:latest
+            imagePullPolicy: Never
+            envFrom:
+              - configMapRef:
+                  name: env-vars
+              - secretRef:
+                  name: env-secrets
+            command: ['python', 'manage.py', 'clearsessions']
+          restartPolicy: Never
+      backoffLimit: 3
