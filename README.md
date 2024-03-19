@@ -110,6 +110,8 @@ kubectl describe service postgres-postgresql | grep Endpoints
 ```
 Полученный IP адрес, а также данные для подключения к БД необходимо внести в файл с секретами (см. ниже).
 
+Это валидно для варианта запуска minikube с использованием драйвера Docker. Если драйвер virtualbox, можно использовать доменное имя `postgres-postgresql.default.svc.cluster.local`
+
 ### Переменные среды и чувствительные данные
 
 В репозитории есть пример файла `env_vars_example.yaml`, в котором нужно заполнить значение переменной `DEBUG`. Этот файл описывает объект `ConfigMap`.
